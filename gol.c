@@ -9,7 +9,7 @@
 #define MIN(a,b) (((a) < (b)) ? (a) : (b))
 /* (death) larva stage -> pupa -> maturity */
 #define MAP " .',:;=*i!|lX@#"
-int *life;
+unsigned char *life;
 unsigned char*pixel;
 int width, height;
 
@@ -55,7 +55,7 @@ int main(int argc, char*argv[]) {
   MagickWandGenesis();
 
   MagickWand *wand = NewMagickWand();
-  life = (int*)malloc(sizeof(int) * width * height);
+  life = (unsigned char*)malloc(sizeof(unsigned char) * width * height);
   memset(life, width * height, 0);
   pixel = malloc(width * height * 2);
   int fd = open(argv[1], O_RDONLY);
