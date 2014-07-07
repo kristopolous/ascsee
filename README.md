@@ -1,12 +1,29 @@
-# Hello world
+# A new kind of Image viewer 
+<img src=http://rt2.me/out.gif>
 
-World: Hello.
+(bubble girl from the terminal - <a href=http://youtu.be/Opu6qvvbTOs>Youtube version</a>)
 
-This is a sophisticated one.  Here's a video: 
-[http://www.youtube.com/watch?v=9_Fns818o4k](http://www.youtube.com/watch?v=9_Fns818o4k)
+A life-simulation where the greyscale intensity of each pixel of your image is the likelihood of survival for the computer "life" living there.  
 
-And here's a lousy gif version:
+Lighter values prosper, giving fuller characters.
+Darker pixels perish and die.
 
-<img src=http://i.imgur.com/n4yQ9w2.gif>
+The results are your image - as a festering stew of artificial life.
 
-If you like the psuedo-random color scheme, there's a lot more where that came from with another project of mine, [acidx](https://github.com/kristopolous/acidx).
+The parameters of the simulation get tossed around randomly each time you use it.
+
+The colonies will grow into your image in different ways; crawling across the screen slowly and rapidly devolving.
+
+## Installing
+
+ascsee is written in C and requires, on debian systems, `libmagickwand-dev`. Try running make.
+
+## Usage
+
+ascsee [image file to see]
+
+ctrl+c when you are done.  That is all.  Keepin' life simple.
+
+## Image support
+
+Under the cover we are using the powerful imagemagick library so almost every format under the sun is viewable.
