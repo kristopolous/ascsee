@@ -31,6 +31,7 @@ unsigned char Pixel(int x, int y) {
   return g_pixel[x * g_width + y];
 }
 
+#define ARG(x, y) (argc > x ? atoi(argv[x]) : y )
 int main(int argc, char*argv[]) {
   fd_set fd_r;
   srand(time(0));
@@ -39,26 +40,41 @@ int main(int argc, char*argv[]) {
   MagickBooleanType stat;
   MagickWand *wand;
 
-  const int 
+  int 
     cutoff = 225, 
-    reproduce = rand() % 40 + 10, 
     contrastRounds = rand() % 5,
+    moveradius = 2,
+    MATURE = 16,
     seedCount = rand() % 10 + 1,
-    dieoff = rand() % 5 + 1,
-    move = rand() % 20 + 1, 
-    moveCost = rand() % 50 + 1, 
+
+    // chance of reproducing
+    reproduce = ARG(2, rand() % 40 + 10), 
+
+    // bigger means fewer children
+    litterSize = ARG(3, rand() % 8 + 2),
+
+    // chance of dying
+    dieoff = ARG(4, rand() % 10 + 2),
+
+    // chance of trying to move around
+    move = ARG(5, rand() % 20 + 2), 
+
+    // chance of growth
+    growth = ARG(6, rand() % 40 + 2), 
+
     // How many rounds to do before displaying to the screen
     viewEvery = 15,
-    tps = 300 * (rand() % 30 + 1);
+    tps = 1000;
 
   FILE *fdesc;
 
   int  
-    ix,
     fd,
+    ix,
     iy,
     i,
     j,
+    maturity,
     turn = 0,
     best, 
     bstIx, 
@@ -82,7 +98,7 @@ int main(int argc, char*argv[]) {
   struct winsize w;
   ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 
-  g_height = w.ws_row - 1;
+  g_height = w.ws_row - 2;
   g_width = w.ws_col;
   memset(g_life, g_width * g_height, 0);
 
@@ -127,7 +143,7 @@ int main(int argc, char*argv[]) {
 
   // Seed the map with some values
   for(ix = 0; ix < seedCount; ix++) {
-    g_life[rand() % (g_height * g_width)] = rand() % 100 + 32;
+    g_life[rand() % (g_height * g_width)] = rand() % 100 + 16;
   }
 
   // We don't look at every step because that would be very tedious.
@@ -139,18 +155,23 @@ int main(int argc, char*argv[]) {
           putchar(MAP[Life(ix,iy) >> 4]);
         }
 
-        if(Life(ix,iy) > 0) {
-          // dies
-          if(Life(ix,iy) > Pixel(ix,iy) && (rand() % (Pixel(ix,iy) + 1)) < dieoff ) { 
+        maturity = Life(ix, iy);
+        if(maturity > 0) {
+
+          // The chance of death is 
+          //
+          // random number % the brightness value of the pixel being < the dieoff
+          // number.
+          if(maturity > Pixel(ix,iy) && (rand() % (Pixel(ix,iy) + 1)) < dieoff ) { 
             g_life[g_width * ix + iy] = 0;
             // reproduces 
-          } else if(rand() % reproduce == 0) { 
+          } else if(maturity > MATURE && rand() % reproduce == 0) { 
               limI = MIN(ix + 2, g_height);
               limJ = MIN(iy + 2, g_width);
 
-              for(i = MAX(ix - 1, 0); i < limI; i++){
-                for(j = MAX(iy - 1, 0); j < limJ; j++){
-                if(Life(i,j) == 0 && (rand() % 16 == 0)) {
+              for(i = MAX(ix - 2, 0); i < limI; i++){
+                for(j = MAX(iy - 2, 0); j < limJ; j++){
+                if(Life(i,j) == 0 && (rand() % litterSize == 0)) {
                   *pLife(i,j) = 1;
                 }
               }
@@ -160,11 +181,12 @@ int main(int argc, char*argv[]) {
 
               // current position 
               best = Pixel(ix, iy); 
-              limI = MIN(ix + 1, g_height);
-              limJ = MIN(iy + 1, g_width);
+              bstIx = -1;
+              limI = MIN(ix + moveradius, g_height);
+              limJ = MIN(iy + moveradius, g_width);
 
-              for(i = MAX(ix - 1, 0); i < limI; i++){
-                for(j = MAX(iy - 1, 0); j < limJ; j++){
+              for(i = MAX(ix - moveradius, 0); i < limI; i++){
+                for(j = MAX(iy - moveradius, 0); j < limJ; j++){
                   if(Life(i, j) == 0) {
                     if(Pixel(i, j) > best) {
                       bstIx = i;
@@ -174,18 +196,16 @@ int main(int argc, char*argv[]) {
                   }
                 }
               }
-                // found a new spot 
-              if(best != Pixel(ix,iy)) {  
-                *pLife(bstIx, bstIy) =  MIN(Life(ix,iy) + 1, cutoff);
+              // found a new spot 
+              if(bstIx != -1) {
+                *pLife(bstIx, bstIy) =  Life(ix, iy);
                 *pLife(ix, iy) = 0;
               }
             // moving is more expensive then staying 
-          } else if(rand() % moveCost == 0) { 
+          } else if(rand() % growth == 0) { 
             
-            g_life[ix * g_width + iy]++; 
-
-            if(Life(ix, iy) > cutoff) {
-              *pLife(ix, iy) = cutoff;
+            if(Life(ix, iy) < cutoff) {
+              g_life[ix * g_width + iy]++; 
             }
           }
         }
@@ -208,7 +228,13 @@ int main(int argc, char*argv[]) {
 
     // This returns everything to the top for another draw.
     if(turn % viewEvery == 0) {
-      printf("\033[%dA", g_height);
+      printf("reproduce:%d litter:%d die:%d move:%d grow:%d \033[100D\033[%dA", 
+        reproduce,
+        litterSize,
+        dieoff,
+        move,
+        growth,
+        g_height);
     }
   }
   free(g_life);

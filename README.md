@@ -22,9 +22,23 @@ ascsee is written in C and requires, on debian systems, `libmagickwand-dev`. Try
 
 ## Usage
 
-ascsee [image file to see]
+ascsee [image file to see] [options]
 
 ctrl+c when you are done.  That is all.  Keepin' life simple.
+
+The *options* permit you to non-randomize the variables of the simulation in the following way:
+
+    ascsee [image file] [reproduce] [litter] [dieoff] [move] [grow]
+
+Where:
+
+ * reproduce - The chance of a mature life ( > `MATURE` ) to have offspring 
+ * litter - The chance of having a child in the surrounding empty squares ( 1 in `litter` )
+ * dieoff - The chance of dying given the the pixel value (if 1 in `brightness of pixel` < `dieoff`)
+ * move - The chance of moving to a better square (higher pixel value) at distance `moveradius`.
+ * grow - The speed of maturity (1 in grow -> next value on a 256 scale)
+
+Any unspecified option falls back to randomization
 
 ## Image support
 
