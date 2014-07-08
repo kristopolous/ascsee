@@ -57,7 +57,7 @@ int main(int argc, char*argv[]) {
     dieoff = ARG(4, rand() % 10 + 2),
 
     // chance of trying to move around
-    move = ARG(5, rand() % 20 + 2), 
+    move = ARG(5, rand() % 50 + 2), 
 
     // chance of growth
     growth = ARG(6, rand() % 40 + 2), 
@@ -65,7 +65,8 @@ int main(int argc, char*argv[]) {
     // How many rounds to do before displaying to the screen
     viewEvery = ARG(7, 15),
 
-    tps = 1000;
+    // fps
+    fps = 45;
 
   FILE *fdesc;
 
@@ -73,6 +74,7 @@ int main(int argc, char*argv[]) {
     fd,
     ix,
     iy,
+    iz,
     i,
     j,
     maturity,
@@ -194,20 +196,23 @@ int main(int argc, char*argv[]) {
               limI = MIN(ix + moveradius, g_height);
               limJ = MIN(iy + moveradius, g_width);
 
-              for(i = MAX(ix - moveradius, 0); i < limI; i++){
-                for(j = MAX(iy - moveradius, 0); j < limJ; j++){
-                  if(Life(i, j) == 0 && rand() % 2 == 0) {
-                    if(Pixel(i, j) > best) {
-                      bstIx = i;
-                      bstIy = j;
-                    }
+              for(iz = 0; iz < 3; iz++) {
+                i = ix + rand() % (moveradius * 2) - moveradius;
+                j = iy + rand() % (moveradius * 2) - moveradius;
+
+                i = MAX(i, 0);
+                j = MAX(j, 0);
+
+                i = MIN(i, g_height);
+                j = MIN(j, g_width);
+                
+                if(Life(i, j) == 0) {
+                  if(Pixel(i, j) > Pixel(ix, iy)) {
+                    *pLife(i, j) =  Life(ix, iy);
+                    *pLife(ix, iy) = 0;
+                    break;
                   }
                 }
-              }
-              // found a new spot 
-              if(bstIx != -1) {
-                *pLife(bstIx, bstIy) =  Life(ix, iy);
-                *pLife(ix, iy) = 0;
               }
             }
             // moving is more expensive then staying 
@@ -232,7 +237,7 @@ int main(int argc, char*argv[]) {
       FD_SET(0, &fd_r);
 
       // This is our sleep value - at least 300
-      ts.tv_usec = 1000000 / tps;
+      ts.tv_usec = 1000000 / fps;
       select(1, &fd_r, NULL, NULL, &ts);
       if(FD_ISSET(0, &fd_r)) { 
         return(0);
