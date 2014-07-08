@@ -51,7 +51,7 @@ int main(int argc, char*argv[]) {
     reproduce = ARG(2, rand() % 40 + 10), 
 
     // bigger means fewer children
-    litterSize = ARG(3, rand() % 8 + 2),
+    litterSize = ARG(3, rand() % 8 + 8),
 
     // chance of dying
     dieoff = ARG(4, rand() % 10 + 2),
@@ -63,7 +63,8 @@ int main(int argc, char*argv[]) {
     growth = ARG(6, rand() % 40 + 2), 
 
     // How many rounds to do before displaying to the screen
-    viewEvery = 15,
+    viewEvery = ARG(7, 15),
+
     tps = 1000;
 
   FILE *fdesc;
@@ -100,7 +101,6 @@ int main(int argc, char*argv[]) {
 
   g_height = w.ws_row - 2;
   g_width = w.ws_col;
-  memset(g_life, g_width * g_height, 0);
 
   // Load the file
   MagickWandGenesis();
@@ -116,6 +116,7 @@ int main(int argc, char*argv[]) {
 
   g_life = (unsigned char*)malloc(sizeof(unsigned char) * g_width * g_height);
   g_pixel = malloc(g_width * g_height);
+  memset(g_life, 0, g_width * g_height);
 
   MagickResetIterator(wand);
 
@@ -146,6 +147,12 @@ int main(int argc, char*argv[]) {
     g_life[rand() % (g_height * g_width)] = rand() % 100 + 16;
   }
 
+  printf("reproduce:%d litter:%d die:%d move:%d grow:%d\n",
+    reproduce,
+    litterSize,
+    dieoff,
+    move,
+    growth);
   // We don't look at every step because that would be very tedious.
   for(;;turn++) {
     for(ix = 0; ix < g_height; ix++) {
@@ -165,19 +172,21 @@ int main(int argc, char*argv[]) {
           if(maturity > Pixel(ix,iy) && (rand() % (Pixel(ix,iy) + 1)) < dieoff ) { 
             g_life[g_width * ix + iy] = 0;
             // reproduces 
-          } else if(maturity > MATURE && rand() % reproduce == 0) { 
+          } else {
+            if(maturity > MATURE && rand() % reproduce == 0) { 
               limI = MIN(ix + 2, g_height);
               limJ = MIN(iy + 2, g_width);
 
               for(i = MAX(ix - 2, 0); i < limI; i++){
                 for(j = MAX(iy - 2, 0); j < limJ; j++){
-                if(Life(i,j) == 0 && (rand() % litterSize == 0)) {
-                  *pLife(i,j) = 1;
+                  if(Life(i,j) == 0 && (rand() % litterSize == 0)) {
+                    *pLife(i,j) = 1;
+                  }
                 }
               }
             }
             // move to a better spot 
-          } else if(rand() % move == 0) { 
+            if(rand() % move == 0) { 
 
               // current position 
               best = Pixel(ix, iy); 
@@ -187,11 +196,10 @@ int main(int argc, char*argv[]) {
 
               for(i = MAX(ix - moveradius, 0); i < limI; i++){
                 for(j = MAX(iy - moveradius, 0); j < limJ; j++){
-                  if(Life(i, j) == 0) {
+                  if(Life(i, j) == 0 && rand() % 2 == 0) {
                     if(Pixel(i, j) > best) {
                       bstIx = i;
                       bstIy = j;
-                      best = Pixel(i, j);
                     }
                   }
                 }
@@ -201,11 +209,13 @@ int main(int argc, char*argv[]) {
                 *pLife(bstIx, bstIy) =  Life(ix, iy);
                 *pLife(ix, iy) = 0;
               }
+            }
             // moving is more expensive then staying 
-          } else if(rand() % growth == 0) { 
-            
-            if(Life(ix, iy) < cutoff) {
-              g_life[ix * g_width + iy]++; 
+            if(rand() % growth == 0) { 
+              
+              if(Life(ix, iy) < cutoff) {
+                g_life[ix * g_width + iy]++; 
+              }
             }
           }
         }
@@ -215,26 +225,20 @@ int main(int argc, char*argv[]) {
       }
     }
 
-    // This makes sure we don't peg the processor.
-    FD_ZERO(&fd_r);
-    FD_SET(0, &fd_r);
-
-    // This is our sleep value - at least 300
-    ts.tv_usec = 1000000 / tps;
-    select(1, &fd_r, NULL, NULL, &ts);
-    if(FD_ISSET(0, &fd_r)) { 
-      return(0);
-    }
-
     // This returns everything to the top for another draw.
     if(turn % viewEvery == 0) {
-      printf("reproduce:%d litter:%d die:%d move:%d grow:%d \033[100D\033[%dA", 
-        reproduce,
-        litterSize,
-        dieoff,
-        move,
-        growth,
-        g_height);
+      // This makes sure we don't peg the processor.
+      FD_ZERO(&fd_r);
+      FD_SET(0, &fd_r);
+
+      // This is our sleep value - at least 300
+      ts.tv_usec = 1000000 / tps;
+      select(1, &fd_r, NULL, NULL, &ts);
+      if(FD_ISSET(0, &fd_r)) { 
+        return(0);
+      }
+
+      printf("\033[%dA", g_height);
     }
   }
   free(g_life);
