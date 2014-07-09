@@ -12,7 +12,9 @@
 #define ARG(x, y) (argc > (x) ? atoi(argv[x]) : (y))
 
 // (death) larva stage -> pupa -> maturity 
-#define MAP " .',:;=*i!|lX@#"
+//#define MAP " .',:;=*i!|lX@#"
+//#define MAP " .',:;=*i!|lX@# .',:;=*i!|lX@#"
+#define MAP " .`,'\"^~-_+=*/<ruvi!1lYVMOX@&#"
 
 unsigned char
   *g_life, 
@@ -38,7 +40,7 @@ int main(int argc, char*argv[]) {
 
   int 
     cutoff = 225, 
-    contrastRounds = rand() % 8 + 3,
+    contrastRounds = rand() % 8 + 1,
     moveradius = -1,
     MATURE = 16,
 
@@ -196,7 +198,7 @@ int main(int argc, char*argv[]) {
       for(iy = 0; iy < g_width; iy++) {
 
         if(turn % viewEvery == 0 && iy < c_width && ix < c_height) { 
-          putchar(MAP[Life(ix, iy) >> 4]);
+          putchar(MAP[Life(ix, iy) >> 3]);
         }
 
         maturity = Life(ix, iy);
@@ -209,7 +211,7 @@ int main(int argc, char*argv[]) {
           //
           // random number % the brightness value of the pixel being < the dieoff
           // number.
-          if(maturity > Pixel(ix,iy) && (rand() % (Pixel(ix,iy) + 1)) < dieoff ) { 
+          if(maturity >= Pixel(ix,iy) && (rand() % (Pixel(ix,iy) + 1)) < dieoff ) { 
             g_life[g_width * ix + iy] = 0;
             // reproduces 
           } else {
