@@ -16,6 +16,9 @@ The colonies will grow into your image in different ways; crawling across the sc
 
 <a href=http://i.imgur.com/tst3rYc.png><img src=http://i.imgur.com/tst3rYcl.jpg></a>
 
+Vermeer's Music Lesson
+<a href=http://i.imgur.com/J9rloTj.png><img src=http://i.imgur.com/J9rloTjl.jpg></a>
+
 Generating Michelangelo's *Creation of Adam*: [on youtube](http://youtu.be/H4j-BkwMB20)
 
 I also suggest Vemeer, Dali, and pointillism works such as Seurat's *La Parade de Cirque*.
