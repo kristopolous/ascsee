@@ -24,7 +24,11 @@ I also suggest Vemeer, Dali, and pointillism works such as Seurat's *La Parade d
 
 ## Installing
 
+### Linux
 ascsee is written in C and requires, on debian systems, `libmagickwand-dev`. Try running make.
+
+### OS X & Windows
+I don't use these operating systems every day.  I think on OSX you can use Xcode and macports to generate the binary.  On Windows, my guesses are even flimsier - I really don't know.  If you are more familiar with these platforms, then please contact me and I'll gladly add you as a contributor.
 
 ## Usage
 
@@ -49,3 +53,7 @@ Any unspecified option falls back to randomization
 ## Image support
 
 Under the cover we are using the powerful imagemagick library so almost every format under the sun is viewable.
+
+## Future Dev
+
+I realize that not many people use desktop linux so I plan to make an HTML canvas version in the near future or at leasst provide installation packages for more common desktop OS's.  Thanks.
