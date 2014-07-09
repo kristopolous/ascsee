@@ -45,16 +45,16 @@ int main(int argc, char*argv[]) {
     MATURE = 16,
 
     // chance of reproducing
-    reproduce = ARG(2, rand() % 40 + 10), 
+    reproduce = ARG(2, rand() % 50 + 10), 
 
     // number of children bigger means fewer children
-    litterSize = ARG(3, rand() % 8 + 8),
+    litterSize = ARG(3, rand() % 90 + 8),
 
     // chance of dying
-    dieoff = ARG(4, rand() % 10 + 2),
+    dieoff = ARG(4, rand() % 20 + 2),
 
     // chance of trying to move around
-    move = ARG(5, rand() % 50 + 2), 
+    move = ARG(5, rand() % 80 + 2), 
 
     // chance of growth
     growth = ARG(6, rand() % 40 + 2), 
@@ -115,7 +115,7 @@ int main(int argc, char*argv[]) {
   critical = MAX((int)( criticalFrac * (float)landSize ), 1);
 
   // the move radius is a function of the image height
-  moveradius = MAX(0.07 * g_height, 1);
+  moveradius = MAX(0.06 * g_height, 1);
 
   // Load the file {
   MagickWandGenesis();
@@ -212,7 +212,7 @@ int main(int argc, char*argv[]) {
           //
           // random number % the brightness value of the pixel being < the dieoff
           // number.
-          if(1.25 * maturity >= Pixel(ix,iy) && (rand() % (Pixel(ix,iy) + 1)) < dieoff ) { 
+          if(1.05 * maturity >= Pixel(ix,iy) && (rand() % (Pixel(ix,iy) + 1)) < dieoff ) { 
             g_life[g_width * ix + iy] = 0;
             // reproduces 
           } else {
