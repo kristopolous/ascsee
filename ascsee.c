@@ -7,7 +7,11 @@
 
 #define MAX(a,b) (((a) > (b)) ? (a) : (b))
 #define MIN(a,b) (((a) < (b)) ? (a) : (b))
-/* (death) larva stage -> pupa -> maturity */
+
+// grab an argv.
+#define ARG(x, y) (argc > (x) ? atoi(argv[x]) : (y))
+
+// (death) larva stage -> pupa -> maturity 
 #define MAP " .',:;=*i!|lX@#"
 
 unsigned char
@@ -18,20 +22,12 @@ int
   g_width, 
   g_height;
 
-char* pLife(int x, int y) {
-  return &g_life[x * g_width + y];
-}
-unsigned char Life(int x, int y) {
-  return g_life[x * g_width + y];
-}
-char* pPixel(int x, int y) {
-  return &g_pixel[x * g_width + y];
-}
-unsigned char Pixel(int x, int y) {
-  return g_pixel[x * g_width + y];
-}
+unsigned char* pLife(int x, int y) { return &g_life[x * g_width + y]; }
+unsigned char Life(int x, int y) { return g_life[x * g_width + y]; }
 
-#define ARG(x, y) (argc > x ? atoi(argv[x]) : y )
+unsigned char* pPixel(int x, int y) { return &g_pixel[x * g_width + y]; }
+unsigned char Pixel(int x, int y) { return g_pixel[x * g_width + y]; }
+
 int main(int argc, char*argv[]) {
   fd_set fd_r;
   srand(time(0));
@@ -42,14 +38,14 @@ int main(int argc, char*argv[]) {
 
   int 
     cutoff = 225, 
-    contrastRounds = rand() % 5,
+    contrastRounds = rand() % 8 + 3,
     moveradius = -1,
     MATURE = 16,
 
     // chance of reproducing
     reproduce = ARG(2, rand() % 40 + 10), 
 
-    // bigger means fewer children
+    // number of children bigger means fewer children
     litterSize = ARG(3, rand() % 8 + 8),
 
     // chance of dying
@@ -64,7 +60,7 @@ int main(int argc, char*argv[]) {
     // How many rounds to do before displaying to the screen
     viewEvery = ARG(7, 15),
 
-    // fps
+    // frames per second
     fps = 45;
 
   FILE *fdesc;
@@ -88,9 +84,6 @@ int main(int argc, char*argv[]) {
     j,
     maturity,
     turn = 0,
-    best, 
-    bstIx, 
-    bstIy, 
     limI, 
     limJ;
 
@@ -106,6 +99,7 @@ int main(int argc, char*argv[]) {
   }
 
   ts.tv_sec = 0;
+
   // Determine the height and width of the users' current terminal
   struct winsize w;
   ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
@@ -117,10 +111,10 @@ int main(int argc, char*argv[]) {
   // our critical population is a function of our landsize
   critical = MAX((int)( criticalFrac * (float)landSize ), 1);
 
-  // the move radius is 5% of the image height
+  // the move radius is a function of the image height
   moveradius = MAX(0.07 * g_height, 1);
 
-  // Load the file
+  // Load the file {
   MagickWandGenesis();
 
   wand = NewMagickWand();
@@ -131,6 +125,7 @@ int main(int argc, char*argv[]) {
     printf("Image Magick can't read %s. It can usually read just about anything!\nIs this an image file? Are you sure?\n", argv[1]);
     return 0;
   }
+  // }}
 
   g_life = (unsigned char*)malloc(sizeof(unsigned char) * landSize);
   g_pixel = (unsigned char*)malloc(sizeof(unsigned char) * landSize);
@@ -140,8 +135,9 @@ int main(int argc, char*argv[]) {
 
   while (MagickNextImage(wand) != MagickFalse);
 
+  // increase the contrast of the image a few times
   for(ix = 0; ix < contrastRounds; ix++) {
-    MagickContrastImage( wand, MagickTrue);
+    MagickContrastImage(wand, MagickTrue);
   }
 
   //MagickWriteImage(wand, "/tmp/file.png");
@@ -170,7 +166,7 @@ int main(int argc, char*argv[]) {
     critical
   );
 
-  // We don't look at every step because that would be very tedious.
+  // We don't generate on screen at every step because that would be very tedious.
   for(;;turn++) {
     if(turn % viewEvery == 0) { 
 
@@ -187,10 +183,15 @@ int main(int argc, char*argv[]) {
       }
       ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 
+      // This makes sure that if the user resizes less then
+      // the initial size, it won't screw up the generation into some
+      // garbled mess.
       c_height = MIN(g_height, w.ws_row - 2);
       c_width = MIN(g_width, w.ws_col);
     }
+
     population = 0;
+
     for(ix = 0; ix < g_height; ix++) {
       for(iy = 0; iy < g_width; iy++) {
 
@@ -199,6 +200,7 @@ int main(int argc, char*argv[]) {
         }
 
         maturity = Life(ix, iy);
+
         if(maturity > 0) {
 
           population ++;
@@ -223,16 +225,13 @@ int main(int argc, char*argv[]) {
                 }
               }
             }
-            // move to a better spot 
+            // randomly move to a new empty spot 
             if(rand() % move == 0) { 
 
-              // current position 
-              best = Pixel(ix, iy); 
-              bstIx = -1;
               limI = MIN(ix + moveradius, g_height);
               limJ = MIN(iy + moveradius, g_width);
 
-              for(iz = 0; iz < 3; iz++) {
+              for(iz = 0; iz < 7; iz++) {
                 i = ix + rand() % (moveradius * 2) - moveradius;
                 j = iy + rand() % (moveradius * 2) - moveradius;
 
@@ -251,11 +250,11 @@ int main(int argc, char*argv[]) {
                 }
               }
             }
-            // moving is more expensive then staying 
+            // growing up
             if(rand() % growth == 0) { 
               
               if(Life(ix, iy) < cutoff) {
-                g_life[ix * g_width + iy]++; 
+                pLife(ix, iy)[0]++;
               }
             }
           }
