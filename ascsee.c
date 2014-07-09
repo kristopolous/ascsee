@@ -118,7 +118,7 @@ int main(int argc, char*argv[]) {
   critical = MAX((int)( criticalFrac * (float)landSize ), 1);
 
   // the move radius is 5% of the image height
-  moveradius = MAX(0.05 * g_height, 1);
+  moveradius = MAX(0.07 * g_height, 1);
 
   // Load the file
   MagickWandGenesis();
