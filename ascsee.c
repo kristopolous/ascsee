@@ -43,9 +43,8 @@ int main(int argc, char*argv[]) {
   int 
     cutoff = 225, 
     contrastRounds = rand() % 5,
-    moveradius = 2,
+    moveradius = -1,
     MATURE = 16,
-    seedCount = rand() % 10 + 1,
 
     // chance of reproducing
     reproduce = ARG(2, rand() % 40 + 10), 
@@ -70,11 +69,21 @@ int main(int argc, char*argv[]) {
 
   FILE *fdesc;
 
+  // critical population size
+  // If the population falls below this amount, 
+  // it gets seeded up to it.
+  float criticalFrac = 0.1 / 100;
+
   int  
     fd,
     ix,
     iy,
     iz,
+    c_height,
+    c_width,
+    critical,
+    population = 0,
+    landSize,
     i,
     j,
     maturity,
@@ -101,8 +110,15 @@ int main(int argc, char*argv[]) {
   struct winsize w;
   ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 
-  g_height = w.ws_row - 2;
-  g_width = w.ws_col;
+  c_height = g_height = w.ws_row - 2;
+  c_width =g_width = w.ws_col;
+  landSize = g_height * g_width;
+
+  // our critical population is a function of our landsize
+  critical = MAX((int)( criticalFrac * (float)landSize ), 1);
+
+  // the move radius is 5% of the image height
+  moveradius = MAX(0.05 * g_height, 1);
 
   // Load the file
   MagickWandGenesis();
@@ -116,9 +132,9 @@ int main(int argc, char*argv[]) {
     return 0;
   }
 
-  g_life = (unsigned char*)malloc(sizeof(unsigned char) * g_width * g_height);
-  g_pixel = malloc(g_width * g_height);
-  memset(g_life, 0, g_width * g_height);
+  g_life = (unsigned char*)malloc(sizeof(unsigned char) * landSize);
+  g_pixel = (unsigned char*)malloc(sizeof(unsigned char) * landSize);
+  memset(g_life, 0, landSize);
 
   MagickResetIterator(wand);
 
@@ -144,28 +160,48 @@ int main(int argc, char*argv[]) {
     g_pixel
   );
 
-  // Seed the map with some values
-  for(ix = 0; ix < seedCount; ix++) {
-    g_life[rand() % (g_height * g_width)] = rand() % 100 + 16;
-  }
-
-  printf("reproduce:%d litter:%d die:%d move:%d grow:%d\n",
+  printf("reproduce:%d litter:%d die:%d move:%d (rad:%d) grow:%d (crit:%d)\n",
     reproduce,
     litterSize,
     dieoff,
     move,
-    growth);
+    moveradius,
+    growth,
+    critical
+  );
+
   // We don't look at every step because that would be very tedious.
   for(;;turn++) {
+    if(turn % viewEvery == 0) { 
+
+      // seed if necessary
+      for(ix = population; ix < critical; ix++) {
+        for(;;) {
+          i = rand() % g_height;
+          j = rand() % g_width;
+          if(Life(i, j) == 0) {
+            *pLife(i, j) = MATURE;
+            break;
+          }
+        }
+      }
+      ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+
+      c_height = MIN(g_height, w.ws_row - 2);
+      c_width = MIN(g_width, w.ws_col);
+    }
+    population = 0;
     for(ix = 0; ix < g_height; ix++) {
       for(iy = 0; iy < g_width; iy++) {
 
-        if(turn % viewEvery == 0) { 
-          putchar(MAP[Life(ix,iy) >> 4]);
+        if(turn % viewEvery == 0 && iy < c_width && ix < c_height) { 
+          putchar(MAP[Life(ix, iy) >> 4]);
         }
 
         maturity = Life(ix, iy);
         if(maturity > 0) {
+
+          population ++;
 
           // The chance of death is 
           //
@@ -225,7 +261,7 @@ int main(int argc, char*argv[]) {
           }
         }
       }
-      if(turn % viewEvery == 0) {
+      if(turn % viewEvery == 0 && ix < c_height) {
         putchar('\n');
       }
     }
@@ -243,7 +279,7 @@ int main(int argc, char*argv[]) {
         return(0);
       }
 
-      printf("\033[%dA", g_height);
+      printf("\033[%dA", c_height);
     }
   }
   free(g_life);
