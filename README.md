@@ -16,6 +16,12 @@ The colonies will grow into your image in different ways; crawling across the sc
 
 <a href=http://i.imgur.com/tst3rYc.png><img src=http://i.imgur.com/tst3rYcl.jpg></a>
 
+Generating Michelangelo's *Creation of Adam*: [on youtube](http://youtu.be/H4j-BkwMB20)
+
+I also suggest Vemeer, Dali, and pointillism works such as Seurat's *La Parade de Cirque*.
+
+### You should really try it yourself.  It runs at 45 frames a second. This is higher than youtube will do playback so these rendered screen-caps are just inferior approximations of the actual viewing experience.
+
 ## Installing
 
 ascsee is written in C and requires, on debian systems, `libmagickwand-dev`. Try running make.
