@@ -12,8 +12,6 @@
 #define ARG(x, y) (argc > (x) ? atoi(argv[x]) : (y))
 
 // (death) larva stage -> pupa -> maturity 
-//#define MAP " .',:;=*i!|lX@#"
-//#define MAP " .',:;=*i!|lX@# .',:;=*i!|lX@#"
 #define MAP " .`,'\"^~-_+=*/<ruvi!1lYVMOX@&#"
 
 unsigned char
@@ -70,7 +68,7 @@ int main(int argc, char*argv[]) {
   // critical population size
   // If the population falls below this amount, 
   // it gets seeded up to it.
-  float criticalFrac = 0.1 / 100;
+  float criticalFrac = 0.015 / 100;
 
   int  
     fd,
@@ -107,7 +105,7 @@ int main(int argc, char*argv[]) {
   ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 
   c_height = g_height = w.ws_row - 2;
-  c_width =g_width = w.ws_col;
+  c_width = g_width = w.ws_col;
   landSize = g_height * g_width;
 
   // our critical population is a function of our landsize
@@ -211,7 +209,7 @@ int main(int argc, char*argv[]) {
           //
           // random number % the brightness value of the pixel being < the dieoff
           // number.
-          if(maturity >= Pixel(ix,iy) && (rand() % (Pixel(ix,iy) + 1)) < dieoff ) { 
+          if(maturity >= Pixel(ix, iy) && (rand() % (Pixel(ix, iy) + 1)) < dieoff ) { 
             g_life[g_width * ix + iy] = 0;
             // reproduces 
           } else {
@@ -221,8 +219,8 @@ int main(int argc, char*argv[]) {
 
               for(i = MAX(ix - 2, 0); i < limI; i++){
                 for(j = MAX(iy - 2, 0); j < limJ; j++){
-                  if(Life(i,j) == 0 && (rand() % litterSize == 0)) {
-                    *pLife(i,j) = 1;
+                  if(Life(i, j) == 0 && (rand() % litterSize == 0)) {
+                    *pLife(i, j) = 1;
                   }
                 }
               }
