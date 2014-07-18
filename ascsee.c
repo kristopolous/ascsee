@@ -12,7 +12,7 @@
 #define ARG(x, y) (argc > (x) ? atoi(argv[x]) : (y))
 
 // (death) larva stage -> pupa -> maturity 
-#define MAP " .`,'\"^~-_+=*/<ruvi!1lYVMOX@&#"
+#define MAP " .`,'\"^~-_+=*:/<ruvi!1lYVWMOX@&#"
 
 unsigned char
   *g_life, 
@@ -38,21 +38,21 @@ int main(int argc, char*argv[]) {
 
   int 
     cutoff = 225, 
-    contrastRounds = rand() % 8 + 1,
+    contrastRounds = rand() % 3 + 1,
     moveradius = -1,
     MATURE = 16,
 
     // chance of reproducing
-    reproduce = ARG(2, rand() % 40 + 10), 
+    reproduce = ARG(2, rand() % 50 + 10), 
 
     // number of children bigger means fewer children
-    litterSize = ARG(3, rand() % 8 + 8),
+    litterSize = ARG(3, rand() % 90 + 8),
 
     // chance of dying
-    dieoff = ARG(4, rand() % 10 + 2),
+    dieoff = ARG(4, rand() % 20 + 2),
 
     // chance of trying to move around
-    move = ARG(5, rand() % 50 + 2), 
+    move = ARG(5, rand() % 80 + 2), 
 
     // chance of growth
     growth = ARG(6, rand() % 40 + 2), 
@@ -68,10 +68,11 @@ int main(int argc, char*argv[]) {
   // critical population size
   // If the population falls below this amount, 
   // it gets seeded up to it.
-  float criticalFrac = 0.015 / 100;
+  float criticalFrac = 0.001 / 100;
 
   int  
     fd,
+    iw,
     ix,
     iy,
     iz,
@@ -112,7 +113,7 @@ int main(int argc, char*argv[]) {
   critical = MAX((int)( criticalFrac * (float)landSize ), 1);
 
   // the move radius is a function of the image height
-  moveradius = MAX(0.07 * g_height, 1);
+  moveradius = MAX(0.06 * g_height, 1);
 
   // Load the file {
   MagickWandGenesis();
@@ -196,7 +197,7 @@ int main(int argc, char*argv[]) {
       for(iy = 0; iy < g_width; iy++) {
 
         if(turn % viewEvery == 0 && iy < c_width && ix < c_height) { 
-          putchar(MAP[Life(ix, iy) >> 3]);
+          putchar(MAP[abs((int)Life(ix, iy) - 0 * (int)Pixel(ix, iy)) >> 3]);
         }
 
         maturity = Life(ix, iy);
@@ -209,7 +210,7 @@ int main(int argc, char*argv[]) {
           //
           // random number % the brightness value of the pixel being < the dieoff
           // number.
-          if(maturity >= Pixel(ix, iy) && (rand() % (Pixel(ix, iy) + 1)) < dieoff ) { 
+          if(1.05 * maturity >= Pixel(ix,iy) && (rand() % (Pixel(ix,iy) + 1)) < dieoff ) { 
             g_life[g_width * ix + iy] = 0;
             // reproduces 
           } else {
