@@ -146,8 +146,7 @@ int main(int argc, char*argv[]) {
   MagickResizeImage(
     wand,
     g_width, g_height,
-    LanczosFilter,
-    1.0
+    LanczosFilter
   );
   MagickExportImagePixels(wand,
     0, 0,

@@ -1,5 +1,5 @@
-CFLAGS=`pkg-config --cflags Wand` -g3 -O3
-LDLIBS=`pkg-config --libs Wand` -lpthread -lm -ldl 
+CFLAGS=`pkg-config --cflags MagickWand` -g3 -O3
+LDLIBS=`pkg-config --libs MagickWand` -lpthread -lm -ldl 
 
 ascsee: ascsee.o
 clean:
