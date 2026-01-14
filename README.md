@@ -33,7 +33,7 @@ Generating Michelangelo's *Creation of Adam*: [on youtube](http://youtu.be/H4j-B
 
 I also suggest checking out pointillism works such as Seurat's *La Parade de Cirque*.
 
-** You should try it. It's way better in person **
+**You should try it. It's way better in person**
 
 ## Compiling
 
