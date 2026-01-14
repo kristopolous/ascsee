@@ -33,9 +33,9 @@ Generating Michelangelo's *Creation of Adam*: [on youtube](http://youtu.be/H4j-B
 
 I also suggest checking out pointillism works such as Seurat's *La Parade de Cirque*.
 
-### You should really try it yourself.  It runs at 45 frames a second. This is higher than youtube will do playback so these rendered screen-caps are just inferior approximations of the actual viewing experience.
+** You should try it. It's way better in person **
 
-## Installing
+## Compiling
 
 **ascsee** is written in C and requires a c compiler. Just about any should do.
  * debian: sudo apt install libmagickwand-dev`
