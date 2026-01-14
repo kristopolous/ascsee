@@ -1,7 +1,4 @@
-# A new kind of Image viewer 
-<img src=http://rt2.me/out.gif>
-
-(bubble girl from the terminal - <a href=http://youtu.be/Opu6qvvbTOs>Youtube version</a>)
+# Animated Ascii Image Viewer
 
 A life-simulation where the greyscale intensity of each pixel of your image is the likelihood of survival for the computer "life" living there.  
 
@@ -10,6 +7,8 @@ Darker pixels perish and die.
 
 The results are your image - as a festering stew of artificial life.
 
+(bubble girl from the terminal - <a href=http://youtu.be/Opu6qvvbTOs>Youtube version</a>)
+
 The parameters of the simulation get tossed around randomly each time you use it.
 
 The colonies will grow into your image in different ways; crawling across the screen slowly and rapidly devolving yielding nice results:
@@ -17,14 +16,17 @@ The colonies will grow into your image in different ways; crawling across the sc
 <a href=http://i.imgur.com/tst3rYc.png><img src=http://i.imgur.com/tst3rYcl.jpg></a>
 
 Vermeer's *Music Lesson*
+
 <a href=http://i.imgur.com/J9rloTj.png><img src=http://i.imgur.com/J9rloTjl.jpg></a>
 
 Another version, after 8 hours:
+
 <a href=http://i.imgur.com/x1Ehi22.png>
 <img src=http://i.imgur.com/x1Ehi22l.jpg>
 </a>
 
 Buzz Aldrin on the Moon. Look at the character details:
+
 <a href=http://i.imgur.com/R8NIQfR.png><img src=http://i.imgur.com/R8NIQfRl.jpg></a>
 
 Generating Michelangelo's *Creation of Adam*: [on youtube](http://youtu.be/H4j-BkwMB20)
