@@ -3,6 +3,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
+#include <stdlib.h>
+#include <time.h>
 #include <MagickWand/MagickWand.h>
 
 #define MAX(a,b) (((a) > (b)) ? (a) : (b))
@@ -146,9 +148,8 @@ int main(int argc, char*argv[]) {
   MagickResizeImage(
     wand,
     g_width, g_height,
-    LanczosFilter,
-    1.0
-  );
+    LanczosFilter);
+
   MagickExportImagePixels(wand,
     0, 0,
     g_width, g_height,
