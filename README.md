@@ -37,7 +37,11 @@ I also suggest checking out pointillism works such as Seurat's *La Parade de Cir
 
 ## Installing
 
-**ascsee** is written in C and requires, on Debian systems, `libmagickwand-dev`. Try running make.
+**ascsee** is written in C and requires a c compiler. Just about any should do.
+ * debian: sudo apt install libmagickwand-dev`
+ * macos: brew install imagemagick
+
+Then `make`.
 
 ## Usage
 
