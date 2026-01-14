@@ -38,8 +38,9 @@ I also suggest checking out pointillism works such as Seurat's *La Parade de Cir
 ## Compiling
 
 **ascsee** is written in C and requires a c compiler. Just about any should do.
- * debian: sudo apt install libmagickwand-dev`
+ * debian: sudo apt install libmagickwand-dev
  * macos: brew install imagemagick
+ * windows: probably possible...
 
 Then `make`.
 
