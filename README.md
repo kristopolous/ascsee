@@ -1,7 +1,4 @@
-# A new kind of Image viewer 
-<img src=http://rt2.me/out.gif>
-
-(bubble girl from the terminal - <a href=http://youtu.be/Opu6qvvbTOs>Youtube version</a>)
+# Animated Ascii Image Viewer
 
 A life-simulation where the greyscale intensity of each pixel of your image is the likelihood of survival for the computer "life" living there.  
 
@@ -9,6 +6,8 @@ Lighter values prosper giving fuller characters.
 Darker pixels perish and die.
 
 The results are your image - as a festering stew of artificial life.
+
+(bubble girl from the terminal - <a href=http://youtu.be/Opu6qvvbTOs>Youtube version</a>)
 
 The parameters of the simulation get tossed around randomly each time you use it.
 
