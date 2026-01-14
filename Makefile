@@ -1,5 +1,5 @@
-CFLAGS=`pkg-config --cflags Wand` -g3 -O3
-LDLIBS=`pkg-config --libs Wand` -lpthread -lm -ldl 
+CFLAGS=-I/usr/include/ImageMagick-7/ -g3 -O3
+LDLIBS=-lGraphicsMagick -lpthread -lm -ldl 
 
 ascsee: ascsee.o
 clean:

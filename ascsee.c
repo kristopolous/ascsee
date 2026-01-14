@@ -3,7 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
-#include <wand/MagickWand.h>
+#include <MagickWand/MagickWand.h>
 
 #define MAX(a,b) (((a) > (b)) ? (a) : (b))
 #define MIN(a,b) (((a) < (b)) ? (a) : (b))
