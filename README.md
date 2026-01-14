@@ -1,4 +1,4 @@
-# Animated Ascii Image Viewer
+# Animated ASCII Image Viewer
 
 A life-simulation where the greyscale intensity of each pixel of your image is the likelihood of survival for the computer "life" living there.  
 
@@ -7,7 +7,7 @@ Darker pixels perish and die.
 
 The results are your image - as a festering stew of artificial life.
 
-(bubble girl from the terminal - <a href=http://youtu.be/Opu6qvvbTOs>Youtube version</a>)
+Example: bubble girl from the terminal on <a href=http://youtu.be/Opu6qvvbTOs>Youtube </a>
 
 The parameters of the simulation get tossed around randomly each time you use it.
 
@@ -37,11 +37,7 @@ I also suggest checking out pointillism works such as Seurat's *La Parade de Cir
 
 ## Installing
 
-### Linux
-ascsee is written in C and requires, on debian systems, `libmagickwand-dev`. Try running make.
-
-### OS X & Windows
-I don't use these operating systems every day.  I think on OSX you can use Xcode and macports to generate the binary.  On Windows, my guesses are even flimsier - I really don't know.  If you are more familiar with these platforms, then please contact me and I'll gladly add you as a contributor.
+**ascsee** is written in C and requires, on Debian systems, `libmagickwand-dev`. Try running make.
 
 ## Usage
 
@@ -66,7 +62,3 @@ Any unspecified option falls back to randomization
 ## Image support
 
 Under the cover we are using the powerful imagemagick library so almost every format under the sun is viewable.
-
-## Future Dev
-
-I realize that not many people use desktop linux so I plan to make an HTML canvas version in the near future or at leasst provide installation packages for more common desktop OS's.  Thanks.
